@@ -1,14 +1,16 @@
 {
   "name": "online-vote",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
     "migrate": "node migrations/run_migrations.js",
-    "setup": "node candidateInsertion.js"
+    "setup": "node candidateInsertion.js",
+    "env": "sync-dotenv"
   },
   "dependencies": {
-    "@sentry/node": "^5.2.0",
+    "@bugsnag/js": "^6.4.0",
+    "@bugsnag/plugin-express": "^6.4.0",
     "axios": "^0.18.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
@@ -19,5 +21,8 @@
     "jsonwebtoken": "^8.4.0",
     "morgan": "~1.9.0",
     "pg": "^7.8.0"
+  },
+  "devDependencies": {
+    "sync-dotenv": "^2.2.1"
   }
 }
