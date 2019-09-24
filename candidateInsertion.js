@@ -20,15 +20,27 @@ async function main() {
     const insertCandidateQuery = 'INSERT INTO candidates (name, position_id) VALUES ($1, $2);';
     db.transaction(IsolationLevel.ReadUncommitted, (client) => {
         Object.keys(data).forEach(async (positionName) => {
-            console.log(`Inserting "${positionName}"`);
-            const { rows: [{ id: positionId }] } = await client.query(insertPositionQuery, [positionName]);
-            data[positionName] = [
-                ...data[positionName],
-                { name: 'Abstain' },
-                { name: 'No Confidence' },
-            ]
+            let position = positionName;
+            console.log(`Inserting "${position}"`);
+            const { rows: [{ id: positionId }] } = await client.query(insertPositionQuery, [position]);
+            if (data[position].length > 1) {
+                data[position] = [
+                    ...data[position],
+                    { name: 'Abstain' },
+                    { name: 'No Confidence' },
+                ];
+            } else if (data[position].length === 1) {
+                position = `${position} - ${data[position][0]}`;
+                data[position] = [
+                    { name: 'Yes' },
+                    { name: 'No' },
+                    { name: 'Abstain' },
+                ];
+            } else {
+                console.log(`Ignoring ${position}, no candidates`);
+            }
             await Promise.all(
-                data[positionName].map(({ name }) => client.query(insertCandidateQuery, [name, positionId]))
+                data[position].map(({ name }) => client.query(insertCandidateQuery, [name, positionId]))
             );
         });
     });
