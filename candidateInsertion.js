@@ -18,6 +18,7 @@ async function main() {
 
     const insertPositionQuery = 'INSERT INTO positions (name) VALUES ($1) RETURNING id;'
     const insertCandidateQuery = 'INSERT INTO candidates (name, position_id) VALUES ($1, $2);';
+    const updatePositionNameQuery = 'UPDATE positions SET name = $1 WHERE id = $2;';
     db.transaction(IsolationLevel.ReadUncommitted, (client) => {
         Object.keys(data).forEach(async (positionName) => {
             let position = positionName;
@@ -30,12 +31,13 @@ async function main() {
                     { name: 'No Confidence' },
                 ];
             } else if (data[position].length === 1) {
-                position = `${position} - ${data[position][0]}`;
+                position = `${position} - ${data[position][0].name}`;
                 data[position] = [
                     { name: 'Yes' },
                     { name: 'No' },
                     { name: 'Abstain' },
                 ];
+                await client.query(updatePositionNameQuery, [position, positionId]);
             } else {
                 console.log(`Ignoring ${position}, no candidates`);
             }
@@ -45,7 +47,7 @@ async function main() {
         });
     });
 
-    if (Boolean(process.env.VALIDATE_USERS)) {
+    if (process.env.VALIDATE_USERS === 'true') {
         console.log('Resetting valid voter table');
         await db.query('DELETE FROM valid_users;');
 
