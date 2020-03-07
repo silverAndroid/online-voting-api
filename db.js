@@ -13,7 +13,7 @@ db.transaction = async (isolationLevel, body) => {
 
     try {
         await client.query(`BEGIN TRANSACTION ISOLATION LEVEL ${isolationLevel};`);
-        body(client);
+        await Promise.resolve(body(client));
         await client.query('COMMIT;');
     } catch (e) {
         await client.query('ROLLBACK');
