@@ -20,7 +20,7 @@ services:
           - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
           - POSTGRES_DB_FILE=/run/secrets/db_name
         volumes:
-          - /var/lib/postgresql/data:/var/lib/postgresql/data
+          - ieee_online_voting:/var/lib/postgresql/data
         secrets:
           - db_user
           - db_password
@@ -35,6 +35,9 @@ services:
         ports:
           - 80:80
           - 443:443
+
+volumes:
+  ieee_online_voting:
 
 secrets:
   db_user:
