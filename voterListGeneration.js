@@ -12,7 +12,7 @@ writeFile(
   'data/voters.json',
   JSON.stringify(
     XLSX.utils.sheet_to_json(sheet)
-      .map(({ email }) => email.toLowerCase())
+      .map(({ 'E-mail': email }) => email.toLowerCase())
   )
 )
   .catch(console.error);
