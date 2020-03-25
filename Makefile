@@ -1,6 +1,6 @@
-build: 
+build:
 	docker build -t ieeeuottawa/online-voting .
-start: 
+start:
 	make start-quick
 	docker-compose run online-voting npm run migrate
 	docker-compose run online-voting npm run setup
@@ -11,7 +11,10 @@ stop:
 restart:
 	make stop
 	make start-quick
-update:
-	git pull
+rebuild:
 	make build
 	make restart
+update:
+	git fetch origin master
+	git rebase origin/master
+	make rebuild
