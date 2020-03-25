@@ -5,7 +5,10 @@ const { promisify } = require('util');
 
 const writeFile = promisify(fs.writeFile);
 
-const workbook = XLSX.readFile(process.env.VOTER_LIST);
+const args = process.argv.slice(2);
+if (!args[0]) throw new Error('You need to pass in the path for the Excel file');
+
+const workbook = XLSX.readFile(args[0]);
 const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
 writeFile(
