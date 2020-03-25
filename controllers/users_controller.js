@@ -15,10 +15,9 @@ module.exports.verifyUser = async ({ headers: { authorization } }, res) => {
         console.log('token is undefined');
         return res.status(400).send(null);
     } else {
-        const { client_id: clientID } = await getCredentials();
         const { data: { aud, email, hd } } = await axios.get('https://www.googleapis.com/oauth2/v3/tokeninfo', { params: { 'id_token': idToken } });
 
-        if (aud === clientID) {
+        if (aud === process.env.GOOGLE_CLIENT_ID) {
             if (!email.endsWith('@uottawa.ca') || hd !== 'uottawa.ca') {
                 console.log(`User ${email} logged in with an invalid email`);
                 return res.status(401).send(null);
@@ -33,7 +32,3 @@ module.exports.verifyUser = async ({ headers: { authorization } }, res) => {
 
     return res.status(200).send(token);
 };
-
-async function getCredentials() {
-    return JSON.parse(await readFileAsync('./credentials.json')).web;
-}
